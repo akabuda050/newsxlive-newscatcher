@@ -1,5 +1,5 @@
 # Newsxlive - Newscatcher
-Newscatcher API wrapper for Ghost.
+Bridge between Newscatcher API and Ghost.
 
 # Fetch news and post it into Ghost site.
 - To run this go to Ghost admin panel, add custom integration, get `GHOST ADMIN API KEY` and `GHOST API URL` and set it to .env file.

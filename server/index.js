@@ -60,7 +60,9 @@ const initServer = () => {
     const credentials = { key: privateKey, cert: certificate };
     const httpsServer = https.createServer(credentials, app);
 
-    httpsServer.listen(config.global.appServerSecurePort);
+    httpsServer.listen(config.global.appServerSecurePort, () => {
+      console.log(`Server is listening at ${config.global.appServerUrl}:${config.global.appServerSecurePort}`);
+    });
   } else {
     const httpServer = http.createServer(app);
     httpServer.listen(config.global.appServerPort, () => {

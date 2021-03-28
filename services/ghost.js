@@ -141,7 +141,7 @@ const deletePost = async (id) => {
   return await axios.delete(`${url}/${id}`, { headers });
 };
 
-const setPostStatus = async (id, status, date) => {
+const setPostStatus = async (id, status) => {
   const headers = await authHeaders();
   const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
 
@@ -153,7 +153,7 @@ const setPostStatus = async (id, status, date) => {
         posts: [
           {
             status: status,
-            updated_at: date ? date : new Date()
+            updated_at: post.updated_at
           },
         ],
       },

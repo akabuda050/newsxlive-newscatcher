@@ -1,3 +1,6 @@
+const Renderer = require('mobiledoc-dom-renderer/dist/commonjs/mobiledoc-dom-renderer')
+const SimpleDOM = require('simple-dom')
+
 const prepareLightMobileDoc = (article) => {
   return JSON.stringify({
     version: '0.3.1',
@@ -23,9 +26,40 @@ const prepareLightMobileDoc = (article) => {
         ],
       ],
     ],
-  });
-};
+  })
+}
+
+const renderMobileDoc = (mobiledoc) => {
+  const dom = new SimpleDOM.Document()
+
+  const renderer = new Renderer.default({
+    dom: dom,
+    atoms: [
+      {
+        name: 'soft-return',
+        type: 'dom',
+        render ({ payload, env: { dom: dom } }) {
+          return dom.createElement('span')
+        }
+      }
+    ],
+    cards: [
+      {
+        name: 'hr',
+        type: 'dom',
+        render ({ payload, env: { dom: dom } }) {
+          return dom.createElement('hr')
+        }
+      }
+    ]
+  })
+
+  const rendered = renderer.render(mobiledoc)
+  const serializer = new SimpleDOM.HTMLSerializer([])
+  return serializer.serializeChildren(rendered.result)
+}
 
 module.exports = {
+  renderMobileDoc,
   prepareLightMobileDoc,
-};
+}

@@ -2,7 +2,7 @@ const config = require('../config');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const { removeSearchParams } = require('../helpers');
-const { prepareLightMobileDoc } = require('../helpers/mobileDoc');
+const { renderMobileDoc, prepareLightMobileDoc } = require('../helpers/mobileDoc');
 const { sendMessage } = require('./mailgun');
 
 const authHeaders = async () => {
@@ -34,8 +34,8 @@ const createPosts = async (articles) => {
         const post = response.data.posts.find((p) => p.id !== undefined);
         if (post) {
           console.log(`${post.title} has been saved!`);
-          if (config.services.mail.shouldSendEmails === true) {
-            sendPostCreatedNotification();
+          if (config.services.mail.shouldSendEmails === 'true') {
+            sendPostCreatedNotification(post);
           }
         }
         return post;
@@ -69,7 +69,7 @@ const sendPostCreatedNotification = (post) => {
     sendMessage({
       to: recipients,
       subject: `News x Live - Post created!`,
-      text: `<h5>${post.title} has been created!</h5><p>${post.mobiledoc}</p>`,
+      text: `${renderMobileDoc(JSON.parse(post.mobiledoc))} <p><a style="width: 100px;height: 25px;border: 1px solid black;border-radius: 4px;background: rebeccapurple;position: absolute; padding: 10px;color: white;font-size: 20px;" href="https://www.newsxlive.com/ghost/#/editor/post/${post.id}/">Publish?</a> </p>`,
     });
   } catch (e) {
     console.log(e);

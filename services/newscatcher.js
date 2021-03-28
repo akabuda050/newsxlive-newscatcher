@@ -30,7 +30,7 @@ const fetchNews = async () => {
     page: randomIntFromInterval(1, 20),
     media: 'True',
   };
-  if (config.services.newscatcher.fetchTodaysOnly === true) {
+  if (config.services.newscatcher.fetchTodaysOnly === 'true') {
     params.from = `${year}/${month}/${date}`;
   }
   const options = {

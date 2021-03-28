@@ -21,12 +21,12 @@ const init = async () => await createPosts(await fetchNews());
       });
     }
     console.log('----------------');
-    if (config.services.mail.shouldSendEmails === true) {
+    if (config.services.mail.shouldSendEmails === 'true') {
       try {
         sendMessage({
           to: config.global.adminEmail,
           subject: `News x Live - Posts error!`,
-          text: `<p>${JSON.stringify(e)}</p>`,
+          text: `${JSON.stringify(e)}`,
         });
       } catch (e) {
         console.log(e);

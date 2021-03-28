@@ -35,7 +35,7 @@ const initServer = () => {
     let result = 'Hey!';
 
     try {
-      result = await setPostStatus(postId, 'publish');
+      result = await setPostStatus(postId, 'published');
     } catch (e) {
       logError(e)
       result = e.message;

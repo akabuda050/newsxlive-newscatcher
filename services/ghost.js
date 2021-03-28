@@ -34,19 +34,8 @@ const createPosts = async (articles) => {
         const post = response.data.posts.find((p) => p.id !== undefined);
         if (post) {
           console.log(`${post.title} has been saved!`);
-
-          if (config.services.mail.shouldSendEmails) {
-            const recipients = post.authors.map((a) => a.email).join(',');
-            try {
-              sendMessage({
-                to: recipients,
-                subject: `News x Live - Post created!`,
-                text: `<h5>${post.title} has been created!</h5><p>${post.mobiledoc}</p>`,
-              });
-            } catch (e) {
-              console.log(e);
-              throw e;
-            }
+          if (config.services.mail.shouldSendEmails === true) {
+            sendPostCreatedNotification();
           }
         }
         return post;
@@ -73,6 +62,20 @@ const preparePosts = async (articles) => {
     };
   });
 };
+
+const sendPostCreatedNotification = (post) => {
+  const recipients = post.authors.map((a) => a.email).join(',');
+  try {
+    sendMessage({
+      to: recipients,
+      subject: `News x Live - Post created!`,
+      text: `<h5>${post.title} has been created!</h5><p>${post.mobiledoc}</p>`,
+    });
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
 
 const randomAuthor = async () => {
   const authors = await prepareAuthors();

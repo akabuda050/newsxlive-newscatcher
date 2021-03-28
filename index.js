@@ -21,7 +21,7 @@ const init = async () => await createPosts(await fetchNews());
       });
     }
     console.log('----------------');
-    if (config.services.mail.shouldSendEmails) {
+    if (config.services.mail.shouldSendEmails === true) {
       try {
         sendMessage({
           to: config.global.adminEmail,

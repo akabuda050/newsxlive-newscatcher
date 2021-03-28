@@ -112,9 +112,16 @@ const prepareAuthors = async () => {
   return config.services.ghost.ghostAuthors.split(';');
 };
 
+const getPost = async (id) => {
+  const headers = await authHeaders();
+  const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
+  const postsResponse = await axios.get(`${url}/${id}`, { headers });
+  console.log(postsResponse)
+  return postsResponse.data.posts.find(p => p.id === id)
+}
+
 const deleteAllPosts = async () => {
-  const res = await authHeaders();
-  const headers = res;
+  const headers = await authHeaders();
   const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
   const postsResponse = await axios.get(`${url}?filter=status:'draft'&limit=all`, { headers });
 
@@ -128,34 +135,40 @@ const deleteAllPosts = async () => {
 };
 
 const deletePost = async (id) => {
-  const res = await authHeaders();
-  const headers = res;
+  const headers = await authHeaders();
   const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
 
   return await axios.delete(`${url}/${id}`, { headers });
 };
 
 const setPostStatus = async (id, status, date) => {
-  const res = await authHeaders();
-  const headers = res;
+  const headers = await authHeaders();
   const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
-  await axios.put(
-    `${url}/${id}`,
-    {
-      posts: [
-        {
-          status: status,
-          updated_at: date ? date : new Date()
-        },
-      ],
-    },
-    { headers },
-  );
+
+  let post = await getPost(id);
+  if (post) {
+    await axios.put(
+      `${url}/${id}`,
+      {
+        posts: [
+          {
+            status: status,
+            updated_at: date ? date : new Date()
+          },
+        ],
+      },
+      { headers },
+    );
+  }
+  else {
+    throw new Error(`No posts found with id ${id}`);
+  }
 };
 
 module.exports = {
   authHeaders,
   createPosts,
+  getPost,
   setPostStatus,
   deletePost,
   deleteAllPosts,

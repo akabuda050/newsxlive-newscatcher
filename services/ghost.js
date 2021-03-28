@@ -4,6 +4,7 @@ const axios = require('axios');
 const { removeSearchParams } = require('../helpers');
 const { renderMobileDoc, prepareLightMobileDoc } = require('../helpers/mobileDoc');
 const { sendMessage } = require('./mailgun');
+const { generateToken } = require('./tokenManager');
 
 const authHeaders = async () => {
   // Admin API key goes here
@@ -63,19 +64,44 @@ const preparePosts = async (articles) => {
   });
 };
 
+const actionButtonStyle = (background) => {
+  return `width: 100px;height: 25px;border: 1px solid black;border-radius: 4px;background: ${background};position: absolute; padding: 10px;color: white;font-size: 20px;`;
+};
+
 const sendPostCreatedNotification = (post) => {
   const recipients = post.authors.map((a) => a.email).join(',');
+  const token = encodeURIComponent(generateToken(`${post.id}:${config.services.newscatcher.postActionsSecret}`));
+  const apiUrl = `${config.global.appServerUrl}:${
+    config.global.appIsServerSecure ? config.global.appServerSecurePort : config.global.appServerPort
+  }`;
+
   try {
     sendMessage({
       to: recipients,
       subject: `News x Live - Post created!`,
-      text: `${renderMobileDoc(JSON.parse(post.mobiledoc))} <p><a style="width: 100px;height: 25px;border: 1px solid black;border-radius: 4px;background: rebeccapurple;position: absolute; padding: 10px;color: white;font-size: 20px;" href="https://www.newsxlive.com/ghost/#/editor/post/${post.id}/">Publish?</a> </p>`,
+      text: `
+      <h1>${post.title}</h1>
+      <p>
+      <img src="${post.feature_image}" width="300px">
+      </p>
+      ${renderMobileDoc(JSON.parse(post.mobiledoc))} 
+      <p>
+        <a target="_blank" style="${actionButtonStyle('rebeccapurple')}" href="${apiUrl}/posts/${
+        post.id
+      }/${token}/publish">Publish?</a> 
+        <a target="_blank" style="${actionButtonStyle('deeppink')}" href="${apiUrl}/posts/${
+        post.id
+      }/${token}/draft">Draft?</a>
+        <a target="_blank" style="${actionButtonStyle('red')}" href="${apiUrl}/posts/${
+        post.id
+      }/${token}/delete">Delete?</a>
+      </p>`,
     });
   } catch (e) {
     console.log(e);
     throw e;
   }
-}
+};
 
 const randomAuthor = async () => {
   const authors = await prepareAuthors();
@@ -86,6 +112,50 @@ const prepareAuthors = async () => {
   return config.services.ghost.ghostAuthors.split(';');
 };
 
+const deleteAllPosts = async () => {
+  const res = await authHeaders();
+  const headers = res;
+  const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
+  const postsResponse = await axios.get(`${url}?filter=status:'draft'&limit=all`, { headers });
+
+  postsResponse.data.posts.forEach(async (post) => {
+    if (post && post.id) {
+      await deletePost(post.id);
+    }
+  });
+
+  return 'deleteAllPosts has been queued!';
+};
+
+const deletePost = async (id) => {
+  const res = await authHeaders();
+  const headers = res;
+  const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
+
+  return await axios.delete(`${url}/${id}`, { headers });
+};
+
+const setPostStatus = async (id, status) => {
+  const res = await authHeaders();
+  const headers = res;
+  const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
+  await axios.put(
+    `${url}/${id}`,
+    {
+      posts: [
+        {
+          status: status,
+        },
+      ],
+    },
+    { headers },
+  );
+};
+
 module.exports = {
+  authHeaders,
   createPosts,
+  setPostStatus,
+  deletePost,
+  deleteAllPosts,
 };

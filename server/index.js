@@ -18,7 +18,8 @@ const initServer = () => {
     let result = 'Hey!';
 
     try {
-      result = await setPostStatus(postId, 'draft');
+      await setPostStatus(postId, 'draft');
+      result = `Post ${postId} has been set to draft.`
     } catch (e) {
       logError(e)
       result = e.message;
@@ -35,7 +36,8 @@ const initServer = () => {
     let result = 'Hey!';
 
     try {
-      result = await setPostStatus(postId, 'published');
+      await setPostStatus(postId, 'published');
+      result = `Post ${postId} has been published.`
     } catch (e) {
       logError(e)
       result = e.message;
@@ -52,7 +54,8 @@ const initServer = () => {
     let result = 'Hey!';
 
     try {
-      result = await deletePost(postId);
+      await deletePost(postId);
+      result = `Post ${postId} has been deleted.`
     } catch (e) {
       logError(e)
       result = e.message;

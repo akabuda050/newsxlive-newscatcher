@@ -116,7 +116,7 @@ const getPost = async (id) => {
   const headers = await authHeaders();
   const url = `${config.services.ghost.ghostApiUrl}/ghost/api/v3/admin/posts`;
   const postsResponse = await axios.get(`${url}/${id}`, { headers });
-  console.log(postsResponse)
+  //console.log(postsResponse)
   return postsResponse.data.posts.find(p => p.id === id)
 }
 

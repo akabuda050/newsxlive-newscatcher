@@ -54,7 +54,7 @@ const initServer = () => {
     res.send(result);
   });
 
-  if (config.global.isAppServerSecure === 'true') {
+  if (config.global.appIsServerSecure === 'true') {
     const privateKey = fs.readFileSync(config.global.appPrivateKey, 'utf8');
     const certificate = fs.readFileSync(config.global.appCertificate, 'utf8');
     const credentials = { key: privateKey, cert: certificate };

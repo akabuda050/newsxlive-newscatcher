@@ -15,4 +15,4 @@ Bridge between Newscatcher API and Ghost.
 - Set `SEND_EMAILS` to true
 
 # Misc
-If you want to fetch old news too you can set `TODAY_ONLY` to rue
+If you want to fetch old news too you can set `TODAY_ONLY` to true

@@ -12,7 +12,7 @@ const initServer = () => {
   app.get('/posts/:postId/:token/draft', async (req, res) => {
     const postId = req.params.postId;
     const token = decodeURIComponent(req.params.token);
-    const secret = `${postId}:${config.services.newscatcher.postActionsSecret}`
+    const secret = `${config.services.newscatcher.postActionsSecret}`
 
     if (!verifyToken(token, secret)) return res.send('Token is not valid');
     let result = 'Hey!';
@@ -28,7 +28,7 @@ const initServer = () => {
   app.get('/posts/:postId/:token/publish', async (req, res) => {
     const postId = req.params.postId;
     const token = decodeURIComponent(req.params.token);
-    const secret = `${postId}:${config.services.newscatcher.postActionsSecret}`
+    const secret = `${config.services.newscatcher.postActionsSecret}`
 
     if (!verifyToken(token, secret)) return res.send('Token is not valid');
     let result = 'Hey!';
@@ -44,7 +44,7 @@ const initServer = () => {
   app.get('/posts/:postId/:token/delete', async (req, res) => {
     const postId = req.params.postId;
     const token = decodeURIComponent(req.params.token);
-    const secret = `${postId}:${config.services.newscatcher.postActionsSecret}`
+    const secret = `${config.services.newscatcher.postActionsSecret}`
 
     if (!verifyToken(token, secret)) return res.send('Token is not valid');
     let result = 'Hey!';

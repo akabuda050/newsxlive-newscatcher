@@ -1,5 +1,10 @@
 const prepareLightMobileDoc = (article) => {
   return JSON.stringify({
+    version: '0.3.1',
+    atoms: [
+      ['soft-return', '', {}],
+      ['soft-return', '', {}],
+    ],
     cards: [['hr', {}]],
     markups: [['a', ['href', article.link]]],
     sections: [

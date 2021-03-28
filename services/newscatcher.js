@@ -44,7 +44,7 @@ const fetchNews = async () => {
   };
   try {
     const response = await axios.request(options);
-    console.log(response && response.data || 'There is no response!');
+    console.log((response && response.data) || 'There is no response!');
     if (response && response.data && response.data.articles) {
       return await filterArticles(response.data.articles);
     }

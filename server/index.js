@@ -20,7 +20,7 @@ const initServer = () => {
     try {
       result = await setPostStatus(postId, 'draft');
     } catch (e) {
-      console.log(e)
+      logError(e)
       result = e.message;
     }
     res.send(result);
@@ -37,7 +37,7 @@ const initServer = () => {
     try {
       result = await setPostStatus(postId, 'publish');
     } catch (e) {
-      console.log(e)
+      logError(e)
       result = e.message;
     }
     res.send(result);
@@ -54,7 +54,7 @@ const initServer = () => {
     try {
       result = await deletePost(postId);
     } catch (e) {
-      console.log(e)
+      logError(e)
       result = e.message;
     }
     res.send(result);
@@ -76,6 +76,15 @@ const initServer = () => {
     });
   }
 };
+
+const logError = (e) =>{
+  console.log(e);
+  if (e.response && e.response.data && e.response.data.errors) {
+    e.response.data.errors.forEach((error) => {
+      console.log(error);
+    });
+  }
+}
 
 try {
   initServer();

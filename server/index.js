@@ -10,7 +10,7 @@ const initServer = () => {
   const app = express();
 
   app.get('/posts/:postId/:token/:status', async (req, res) => {
-    const acceptStatuses = ['published', 'draft'];
+    const acceptStatuses = ['published', 'draft', 'delete'];
     const postId = req.params.postId;
     const status = req.params.status;
     const token = decodeURIComponent(req.params.token);
@@ -23,28 +23,13 @@ const initServer = () => {
     let resStatus = 200;
 
     try {
-      await setPostStatus(postId, 'published');
-      result = `Post status has been changed to ${status}. Post id: ${postId}.`;
-    } catch (e) {
-      logError(e);
-      result = e.message;
-      resStatus = 500;
-    }
-    res.status(resStatus).send(result);
-  });
-
-  app.get('/posts/:postId/:token/delete', async (req, res) => {
-    const postId = req.params.postId;
-    const token = decodeURIComponent(req.params.token);
-    const secret = `${config.services.newscatcher.postActionsSecret}`;
-
-    if (!verifyToken(token, secret)) return res.status(401).send('Token is not valid');
-    
-    let result;
-    let resStatus = 200;
-    try {
-      await deletePost(postId);
-      result = `Post ${postId} has been deleted.`;
+      if (status == 'delete') {
+        await deletePost(postId);
+        result = `Post ${postId} has been deleted.`;
+      } else {
+        await setPostStatus(postId, 'published');
+        result = `Post status has been changed to ${status}. Post id: ${postId}.`;
+      }
     } catch (e) {
       logError(e);
       result = e.message;

@@ -9,58 +9,48 @@ const { deletePost, setPostStatus } = require('../services/ghost');
 const initServer = () => {
   const app = express();
 
-  app.get('/posts/:postId/:token/draft', async (req, res) => {
+  app.get('/posts/:postId/:token/:status', async (req, res) => {
+    const acceptStatuses = ['published', 'draft'];
     const postId = req.params.postId;
+    const status = req.params.status;
     const token = decodeURIComponent(req.params.token);
-    const secret = `${config.services.newscatcher.postActionsSecret}`
+    const secret = `${config.services.newscatcher.postActionsSecret}`;
 
-    if (!verifyToken(token, secret)) return res.send('Token is not valid');
-    let result = 'Hey!';
+    if (!verifyToken(token, secret)) return res.status(401).send('Token is not valid');
+    if (!acceptStatuses.includes(status)) return res.status(400).send(`${status} is not valid status!`);
 
-    try {
-      await setPostStatus(postId, 'draft');
-      result = `Post ${postId} has been set to draft.`
-    } catch (e) {
-      logError(e)
-      result = e.message;
-    }
-    res.send(result);
-  });
-
-  app.get('/posts/:postId/:token/publish', async (req, res) => {
-    const postId = req.params.postId;
-    const token = decodeURIComponent(req.params.token);
-    const secret = `${config.services.newscatcher.postActionsSecret}`
-
-    if (!verifyToken(token, secret)) return res.send('Token is not valid');
-    let result = 'Hey!';
+    let result;
+    let resStatus = 200;
 
     try {
       await setPostStatus(postId, 'published');
-      result = `Post ${postId} has been published.`
+      result = `Post status has been changed to ${status}. Post id: ${postId}.`;
     } catch (e) {
-      logError(e)
+      logError(e);
       result = e.message;
+      resStatus = 500;
     }
-    res.send(result);
+    res.status(resStatus).send(result);
   });
 
   app.get('/posts/:postId/:token/delete', async (req, res) => {
     const postId = req.params.postId;
     const token = decodeURIComponent(req.params.token);
-    const secret = `${config.services.newscatcher.postActionsSecret}`
+    const secret = `${config.services.newscatcher.postActionsSecret}`;
 
-    if (!verifyToken(token, secret)) return res.send('Token is not valid');
-    let result = 'Hey!';
-
+    if (!verifyToken(token, secret)) return res.status(401).send('Token is not valid');
+    
+    let result;
+    let resStatus = 200;
     try {
       await deletePost(postId);
-      result = `Post ${postId} has been deleted.`
+      result = `Post ${postId} has been deleted.`;
     } catch (e) {
-      logError(e)
+      logError(e);
       result = e.message;
+      resStatus = 500;
     }
-    res.send(result);
+    res.status(resStatus).send(result);
   });
 
   if (config.global.appIsServerSecure === 'true') {
@@ -80,14 +70,14 @@ const initServer = () => {
   }
 };
 
-const logError = (e) =>{
+const logError = (e) => {
   console.log(e);
   if (e.response && e.response.data && e.response.data.errors) {
     e.response.data.errors.forEach((error) => {
       console.log(error);
     });
   }
-}
+};
 
 try {
   initServer();

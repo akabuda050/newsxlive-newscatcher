@@ -34,7 +34,7 @@ const createPosts = async (articles) => {
       return axios.post(url, payload, { headers }).then((response) => {
         const post = response.data.posts.find((p) => p.id !== undefined);
         if (post) {
-          console.log(`${post.title} has been saved!`);
+          console.log(`${post.title} has been saved and assigned to ${post.authors.map(a => a.email).join(',')}!`);
           if (config.services.mail.shouldSendEmails === 'true') {
             sendPostCreatedNotification(post);
           }
@@ -46,7 +46,7 @@ const createPosts = async (articles) => {
 };
 
 const preparePosts = async (articles) => {
-  return articles.map((a) => {
+  return Promise.all(articles.map(async (a) => {
     let authors = [await randomAuthor()];
     let media = removeSearchParams(a.media);
     // Post
@@ -60,7 +60,7 @@ const preparePosts = async (articles) => {
       tags: [{ name: a.topic }],
       authors: authors,
     };
-  });
+  }))
 };
 
 const actionButtonStyle = (background) => {
@@ -84,12 +84,12 @@ const sendPostCreatedNotification = (post) => {
       <p>
       <img src="${post.feature_image}" width="300px">
       </p>
-      <h5>${post.tags.map(t => t.name).join(',')}</h6>
+      <h5>${post.tags.map(t => t.name).join(',')}</h5>
       ${renderMobileDoc(JSON.parse(post.mobiledoc))} 
       <p>
         <a target="_blank" style="${actionButtonStyle('rebeccapurple')}" href="${apiUrl}/posts/${post.id}/${token}/publish">Publish?</a> 
         <a target="_blank" style="${actionButtonStyle('deeppink')}" href="${apiUrl}/posts/${post.id}/${token}/draft">Draft?</a>
-        <a target="_blank" style="${actionButtonStyle('green')}" href="${ghostUrl}/ghost/#/editor/post/${post.id}/edit">Edit?</a>
+        <a target="_blank" style="${actionButtonStyle('green')}" href="${ghostUrl}/ghost/#/editor/post/${post.id}">Edit?</a>
         <a target="_blank" style="${actionButtonStyle('red')}" href="${apiUrl}/posts/${post.id}/${token}/delete">Delete?</a>
       </p>`,
     });

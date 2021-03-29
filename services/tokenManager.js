@@ -8,7 +8,7 @@ const generateToken = (key) => {
   return jwt.sign({}, Buffer.from(secret, 'hex'), {
     keyid: id,
     algorithm: 'HS256',
-    expiresIn: 10800,
+    expiresIn: 43200,
   });
 };
 

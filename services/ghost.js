@@ -46,9 +46,8 @@ const createPosts = async (articles) => {
 };
 
 const preparePosts = async (articles) => {
-  let authors = [await randomAuthor()];
-
   return articles.map((a) => {
+    let authors = [await randomAuthor()];
     let media = removeSearchParams(a.media);
     // Post
     return {
@@ -74,6 +73,7 @@ const sendPostCreatedNotification = (post) => {
   const apiUrl = `${config.global.appServerUrl}:${
     config.global.appIsServerSecure ? config.global.appServerSecurePort : config.global.appServerPort
   }`;
+  const ghostUrl = config.services.ghost.ghostApiUrl;
 
   try {
     sendMessage({
@@ -84,17 +84,13 @@ const sendPostCreatedNotification = (post) => {
       <p>
       <img src="${post.feature_image}" width="300px">
       </p>
+      <h5>${post.tags.map(t => t.name).join(',')}</h6>
       ${renderMobileDoc(JSON.parse(post.mobiledoc))} 
       <p>
-        <a target="_blank" style="${actionButtonStyle('rebeccapurple')}" href="${apiUrl}/posts/${
-        post.id
-      }/${token}/publish">Publish?</a> 
-        <a target="_blank" style="${actionButtonStyle('deeppink')}" href="${apiUrl}/posts/${
-        post.id
-      }/${token}/draft">Draft?</a>
-        <a target="_blank" style="${actionButtonStyle('red')}" href="${apiUrl}/posts/${
-        post.id
-      }/${token}/delete">Delete?</a>
+        <a target="_blank" style="${actionButtonStyle('rebeccapurple')}" href="${apiUrl}/posts/${post.id}/${token}/publish">Publish?</a> 
+        <a target="_blank" style="${actionButtonStyle('deeppink')}" href="${apiUrl}/posts/${post.id}/${token}/draft">Draft?</a>
+        <a target="_blank" style="${actionButtonStyle('green')}" href="${ghostUrl}/ghost/#/editor/post/${post.id}/edit">Edit?</a>
+        <a target="_blank" style="${actionButtonStyle('red')}" href="${apiUrl}/posts/${post.id}/${token}/delete">Delete?</a>
       </p>`,
     });
   } catch (e) {

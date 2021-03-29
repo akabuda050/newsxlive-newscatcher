@@ -27,7 +27,7 @@ const initServer = () => {
         await deletePost(postId);
         result = `Post ${postId} has been deleted.`;
       } else {
-        await setPostStatus(postId, 'published');
+        await setPostStatus(postId, status);
         result = `Post status has been changed to ${status}. Post id: ${postId}.`;
       }
     } catch (e) {

@@ -87,7 +87,7 @@ const sendPostCreatedNotification = (post) => {
       <h5>${post.tags.map(t => t.name).join(',')}</h5>
       ${renderMobileDoc(JSON.parse(post.mobiledoc))} 
       <p>
-        <a target="_blank" style="${actionButtonStyle('rebeccapurple')}" href="${apiUrl}/posts/${post.id}/${token}/publish">Publish?</a> 
+        <a target="_blank" style="${actionButtonStyle('rebeccapurple')}" href="${apiUrl}/posts/${post.id}/${token}/published">Publish?</a> 
         <a target="_blank" style="${actionButtonStyle('deeppink')}" href="${apiUrl}/posts/${post.id}/${token}/draft">Draft?</a>
         <a target="_blank" style="${actionButtonStyle('green')}" href="${ghostUrl}/ghost/#/editor/post/${post.id}">Edit?</a>
         <a target="_blank" style="${actionButtonStyle('red')}" href="${apiUrl}/posts/${post.id}/${token}/delete">Delete?</a>

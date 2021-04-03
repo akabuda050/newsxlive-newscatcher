@@ -5,7 +5,11 @@ const { randomIntFromInterval } = require('../helpers');
 const { filterArticles } = require('../filters/newscatcher');
 
 const fetchNews = async () => {
-  let [month, date, year] = new Date().toLocaleDateString('en-US').split('/');
+  let fromDate = new Date();
+  let toDate = new Date().toLocaleString('en-US');
+
+  fromDate.setHours(fromDate.getHours() - 2).toLocaleString('en-US');
+
   let topics = [
     'news',
     'sport',
@@ -22,16 +26,20 @@ const fetchNews = async () => {
     'science',
   ];
   let params = {
-    q: randomWords(),
+    q: randomWords({ exactly: 1, wordsPerString: 2 }).join(''),
     topic: topics[Math.floor(Math.random() * topics.length)],
     lang: 'en',
     sort_by: 'date',
     page_size: 3,
     page: randomIntFromInterval(1, 20),
     media: 'True',
+    ranked_only: true,
+    from_rank: 1,
+    to_rank: 10,
   };
   if (config.services.newscatcher.fetchTodaysOnly === 'true') {
-    params.from = `${year}/${month}/${date}`;
+    params.from = fromDate;
+    params.to = toDate;
   }
   const options = {
     method: 'GET',

@@ -8,7 +8,7 @@ const fetchNews = async () => {
   let fromDate = new Date();
   let toDate = new Date().toLocaleString('en-US');
 
-  fromDate.setHours(fromDate.getHours() - 2).toLocaleString('en-US');
+  fromDate.setHours(fromDate.getHours() - 1).toLocaleString('en-US');
 
   let topics = [
     'news',

@@ -26,7 +26,7 @@ const fetchNews = async () => {
     'science',
   ];
   let params = {
-    q: randomWords({ exactly: 1, wordsPerString: 1 }).join(''),
+    q: randomWords({ exactly: 1, wordsPerString: 2 }).join(''),
     topic: topics[Math.floor(Math.random() * topics.length)],
     lang: 'en',
     sort_by: 'date',
@@ -34,12 +34,13 @@ const fetchNews = async () => {
     page: randomIntFromInterval(1, 20),
     media: 'True',
     ranked_only: true,
-    from_rank: 1,
-    to_rank: 50,
+    //rom_rank: 1,
+    //to_rank: 100,
   };
   if (config.services.newscatcher.fetchTodaysOnly === 'true') {
-    params.from = fromDate;
-    params.to = toDate;
+    params.from = new Date().toLocaleDateString('en-US')
+    //params.from = fromDate;
+    //params.to = toDate;
   }
   const options = {
     method: 'GET',

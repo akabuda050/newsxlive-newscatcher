@@ -26,7 +26,7 @@ const fetchNews = async () => {
     'science',
   ];
   let params = {
-    q: randomWords({ exactly: 1, wordsPerString: 2 }).join(''),
+    q: randomWords({ exactly: 1, wordsPerString: 1 }).join(''),
     topic: topics[Math.floor(Math.random() * topics.length)],
     lang: 'en',
     sort_by: 'date',

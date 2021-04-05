@@ -33,7 +33,7 @@ const fetchNews = async () => {
     page_size: 3,
     page: randomIntFromInterval(1, 20),
     media: 'True',
-    ranked_only: true,
+    //ranked_only: true,
     //rom_rank: 1,
     //to_rank: 100,
   };

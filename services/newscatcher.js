@@ -22,7 +22,7 @@ const fetchNews = async () => {
     'beauty',
     'travel',
     'music',
-    'food',
+    //'food',
     'science',
   ];
   let params = {
